@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Relais SUPRA LAB</title>
+    <script>
+        // Ce code permet de contourner les restrictions CORS de Free Mobile
+        window.addEventListener('message', async (event) => {
+            if (event.data.type === 'groq-request') {
+                try {
+                    const response = await fetch('https://api.groq.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${event.data.apiKey}`
+                        },
+                        body: JSON.stringify(event.data.payload)
+                    });
+                    const data = await response.json();
+                    window.parent.postMessage({ type: 'groq-response', data }, '*');
+                } catch (error) {
+                    window.parent.postMessage({ type: 'groq-error', error: error.message }, '*');
+                }
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>Relais SUPRA LAB pour Free Mobile</h1>
+    <p>Ce relais permet de contourner les restrictions CORS de Free Mobile.</p>
+    <p>Ne fermez pas cette page !</p>
+</body>
+</html>
